@@ -1,0 +1,19 @@
+language: ruby
+cache: bundler
+sudo: false
+
+rvm:
+  - 2.2
+  - ruby-head
+
+matrix:
+  fast_finish: true
+  allow_failures:
+    - rvm: "ruby-head"
+
+before_install:
+  - 'gem i bundler -v ">= 1.9"'
+
+script:
+  - bundle exec rspec
+
