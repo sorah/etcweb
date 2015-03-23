@@ -1,21 +1,23 @@
 require 'sinatra/base'
+require 'faml'
 require 'rack'
+require 'sass'
 require 'sprockets'
+require 'sprockets/helpers'
+
+require 'bootstrap-sass'
 
 require 'etcd'
 
 module Etcweb
   class App < Sinatra::Base
     set :root, File.expand_path(File.join(__dir__, '..', '..', 'app'))
-
-    def self.sprockets
-      Sprockets::Environment.new.tap { |env|
+    set :sprockets, Sprockets::Environment.new.tap { |env|
         env.append_path "#{self.root}/javascripts"
         env.append_path "#{self.root}/stylesheets"
         env.append_path "#{self.root}/images"
-        env.append_path "#{self.root}/vendor/assets/bower_components"
+        env.append_path "#{self.root}/bower_components"
       }
-    end
 
     def self.initialize_context(config)
       {}.tap do |ctx|
@@ -44,6 +46,8 @@ module Etcweb
     end
 
     helpers do
+      include Sprockets::Helpers
+
       def context
         request.env['etcweb']
       end
@@ -54,6 +58,7 @@ module Etcweb
     end
 
     get '/' do
+      haml :index
     end
   end
 end
