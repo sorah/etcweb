@@ -14,62 +14,10 @@
             %a{href: "/keys/#{paths[0..i].join(?/)}"}
               = part
 
-
 - if node.dir
-  .row
-    .col-md-12
-        .list-group
-          - node.children.sort_by(&:key).each do |child|
-            - name = child.key.split(?/).last
-            %a.list-group-item{href: "/keys#{child.key}"} 
-              .row
-                - if child.dir
-                  .col-md-5
-                    #{name}/
-                  .col-md-7
-                    %span.glyphicon.glyphicon-folder-open{'aria-hidden' => true}
-                - else
-                  .col-md-5= name
-                  .col-md-7
-                    %code= child.value
+  != haml :dir, locals: {node: node}
 - else
-  .row
-    .col-md-12
-      %h3
-        %span.glyphicon.glyphicon-tag{'aria-hidden' => true}
-        Value
-      %pre= node.value
-  .row
-    .col-md-12
-      %h3
-        %span.glyphicon.glyphicon-flag{'aria-hidden' => true}
-        Index
-      %p
-        %span.label-default.label modified_index
-        = node.modified_index
-      %p
-        %span.label-default.label created_index
-        = node.created_index
-  .row
-    .col-md-12
-      %h3
-        %span.glyphicon.glyphicon-edit{'aria-hidden' => true}
-        Modify
-      %form{action: "/keys#{node.key}", method: 'POST'}
-        %input{type: 'hidden', name: '_method', value: 'PUT'}
-        .form-group
-          %textarea.form-control{rows: '5', name: 'value'}= node.value
-        .form-group
-          %button.btn.btn-primary{type: 'submit'} Save
-  .row
-    .col-md-12
-      %h3
-        %span.glyphicon.glyphicon-trash{'aria-hidden' => true}
-        Delete
-      %form{action: "/keys#{node.key}", method: 'POST', onsubmit: 'javascript:confirm("Sure?")'}
-        %input{type: 'hidden', name: '_method', value: 'DELETE'}
-        .form-group
-          %button.btn.btn-danger{type: 'submit'} Destroy
+  != haml :key, locals: {node: node}
 
 
 %footer.keys-footer.row

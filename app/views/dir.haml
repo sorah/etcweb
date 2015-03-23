@@ -1,0 +1,16 @@
+.row
+  .col-md-12
+      .list-group
+        - node.children.sort_by(&:key).each do |child|
+          - name = child.key.split(?/).last
+          %a.list-group-item{href: "/keys#{child.key}"} 
+            .row
+              - if child.dir
+                .col-md-5
+                  #{name}/
+                .col-md-7
+                  %span.glyphicon.glyphicon-folder-open{'aria-hidden' => true}
+              - else
+                .col-md-5= name
+                .col-md-7
+                  %code= child.value

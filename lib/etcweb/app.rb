@@ -11,6 +11,8 @@ require 'etcd'
 
 module Etcweb
   class App < Sinatra::Base
+    set :method_override, true
+    set :show_exceptions, false
     set :root, File.expand_path(File.join(__dir__, '..', '..', 'app'))
     set :sprockets, Sprockets::Environment.new.tap { |env|
         env.append_path "#{self.root}/javascripts"
