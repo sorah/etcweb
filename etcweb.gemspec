@@ -25,6 +25,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "sinatra", ">= 1.4.5"
   spec.add_dependency "etcd", ">= 0.2.4"
+  spec.add_dependency "sprockets", ">= 2.12.3", "< 3"
 
   spec.add_development_dependency "bundler", "~> 1.9"
   spec.add_development_dependency "rake", "~> 10.0"
