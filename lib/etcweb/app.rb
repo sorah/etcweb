@@ -58,7 +58,18 @@ module Etcweb
     end
 
     get '/' do
-      haml :index
+      redirect "/keys/"
+    end
+
+    get '/keys/*' do
+      @path = params[:splat] && params[:splat].first
+      halt 404 unless @path
+      begin
+        @etcd_response = etcd.get("/#{@path}")
+      rescue Etcd::NotDir
+        halt 404
+      end
+      haml :keys
     end
   end
 end

@@ -6,8 +6,9 @@
     %link{rel: 'stylesheet', type: 'text/css', href: '/assets/application.css'}
     %title Etcweb
   %body
-    %header
-      .container
-        %h1 Etcweb
-    .container
+    %header.container
+      .row
+        .col-md-12
+          %h1 Etcweb
+    %section.container
       != yield
