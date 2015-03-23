@@ -2,14 +2,14 @@
 .row
   .col-md-12
     %ol.breadcrumb
-      - active = (@path.nil? || @path.empty?) ? 'active' : nil
+      - active = (key.nil? || key.empty?) ? 'active' : nil
       %li{class: active}
         %a{href: '/keys/'}
           %span.glyphicon.glyphicon-home{'aria-hidden' => true}
-      - if @path
-        - paths = @path.split(?/)
+      - if key
+        - paths = key.split(?/).tap(&:shift)
         - paths.each_with_index do |part, i|
-          - active = (i.succ == @path.size) ? 'active' : nil
+          - active = (i.succ == key.size) ? 'active' : nil
           %li{class: active}
             %a{href: "/keys/#{paths[0..i].join(?/)}"}
               = part

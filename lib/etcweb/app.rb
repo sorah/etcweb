@@ -57,6 +57,10 @@ module Etcweb
       def etcd
         context[:etcd]
       end
+
+      def key
+        @key ||= "/#{params[:splat] && params[:splat].first}"
+      end
     end
 
     get '/' do
@@ -64,10 +68,17 @@ module Etcweb
     end
 
     get '/keys/*' do
-      @path = params[:splat] && params[:splat].first
-      halt 404 unless @path
       begin
-        @etcd_response = etcd.get("/#{@path}")
+        @etcd_response = etcd.get(key)
+      rescue Etcd::NotDir
+        halt 404
+      end
+      haml :keys
+    end
+
+    post '/keys/*' do
+      begin
+        @etcd_response = etcd.get(key)
       rescue Etcd::NotDir
         halt 404
       end
