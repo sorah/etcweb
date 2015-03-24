@@ -4,6 +4,8 @@ require 'etcweb'
 Etcweb::App.set :environment, :test
 Etcweb::App.set :raise_errors, true
 
+OmniAuth.config.test_mode = true
+
 module AppSpecHelper
   include Rack::Test::Methods
 

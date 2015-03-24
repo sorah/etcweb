@@ -11,6 +11,8 @@ require 'bootstrap-sass'
 require 'etcd'
 require 'etcd/etcvault'
 
+require 'omniauth'
+
 module Etcweb
   class App < Sinatra::Base
     set :method_override, true
@@ -86,6 +88,57 @@ module Etcweb
         end
         context[:etcvault_keys][:keys]
       end
+
+      def auth_enabled?
+        context[:config][:auth]
+      end
+
+      def omniauth_strategy
+        context[:config][:auth][:omniauth] or raise 'no config.auth.omniauth specified'
+      end
+
+      def auth_allow_policy_proc
+        context[:config][:auth][:allow_policy_proc] || proc { true }
+      end
+
+      def auth_after_login_proc
+        context[:config][:auth][:after_login_proc] || proc { }
+      end
+
+      def current_user
+        session[:user]
+      end
+    end
+
+    before do
+      next if request.path_info.start_with?('/auth')
+      next unless auth_enabled?
+
+      if current_user && instance_eval(&auth_allow_policy_proc)
+        next
+      end
+
+      if request.get?
+        redirect "/auth/#{omniauth_strategy}"
+      else
+        halt 401
+      end
+    end
+
+    post '/logout' do
+      session[:user] = nil
+      redirect "/"
+    end
+
+    post '/auth/:strategy/callback' do
+      auth = env['omniauth.auth']
+      session[:user] = {
+        uid: auth[:uid],
+        info: auth[:info],
+        provider: auth[:provider],
+      }
+      instance_eval(&auth_after_login_proc)
+      redirect "/"
     end
 
     get '/' do

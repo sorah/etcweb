@@ -10,5 +10,22 @@
 .header-top {
   h1 {
     font-size: 24px;
+    margin: 0;
+    padding: 0;
   }
+  height: 30px;
+  margin-top: 15px;
+  margin-bottom: 8px;
+
+  button {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+}
+
+.align-vertical {
+  display: flex;
+  align-items: center;
 }

@@ -7,8 +7,14 @@
     %title etcweb
   %body
     %header.header-top.container
-      .row
-        .col-md-12
+      .row.align-vertical
+        .col-md-8
           %h1 etcweb
+        .col-md-4.text-right
+          - if auth_enabled? && current_user
+            Logged in as #{current_user[:info][:nickname] || current_user[:info][:name]}
+            %form{action: '/logout', method: 'POST', style: 'display: inline;'}
+              %button.btn.btn-link{type: 'submit'}
+                Log out
     %section.container
       != yield
