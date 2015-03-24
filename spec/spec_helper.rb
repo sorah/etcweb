@@ -1,6 +1,9 @@
 require 'rack/test'
 require 'etcweb'
 
+Etcweb::App.set :environment, :test
+Etcweb::App.set :raise_errors, true
+
 module AppSpecHelper
   include Rack::Test::Methods
 
@@ -39,15 +42,15 @@ module AppSpecHelper
         @renders = []
         unless example.metadata[:render]
           allow_any_instance_of(Etcweb::App).to receive(:render) do |instance, *args, &block|
-            @renders << {engine: args[0], data: args[1], options: args[2] || {}, locals: args[3] || {}, ivars: args[4] || {}}
+            options = args[2] || {}
+            @renders << {
+              engine:  args[0],
+              data:    args[1],
+              options: options,
+              locals:  (args[3] || {}).merge(options[:locals] || {}),
+              ivars:   Hash[instance.instance_variables.map{ |k| [k, instance.instance_variable_get(k)] }]
+            }
             ""
-          end
-          Etcweb::App.class_eval do
-            alias render_orig render
-            def render(*args)
-              render_orig *args, Hash[self.instance_variables.map{ |k| [k, instance_variable_get(k)] }]
-            end
-            private :render, :render_orig
           end
         end
       end
