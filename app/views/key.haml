@@ -7,14 +7,37 @@
 .row
   .col-md-12
     %h3
-      %span.glyphicon.glyphicon-flag{'aria-hidden' => true}
-      Index
+      %span.glyphicon.glyphicon-cog{'aria-hidden' => true}
+      Information
     %p
-      %span.label-default.label modified_index
-      = node.modified_index
-    %p
-      %span.label-default.label created_index
-      = node.created_index
+      %span
+        %span.label-default.label modified_index
+        = node.modified_index
+      %span
+        %span.label-default.label created_index
+        = node.created_index
+    - if node.ttl
+      %p
+        %span.label-default.label TTL
+        = node.ttl.inspect
+    - if node.expiration
+      %p
+        %span.label-default.label expiration
+        = node.expiration.inspect
+
+- if node.etcvault || node.etcvault_error
+  .row
+    .col-md-12
+      %h3
+        %span.glyphicon.glyphicon-briefcase{'aria-hidden' => true}
+        Etcvault
+      - if node.etcvault
+        %p= node.etcvault.inspect
+      - if node.etcvault_error
+        %p
+          %span.label.label-danger Error
+          = node.etcvault_error.inspect
+
 .row
   .col-md-12
     %h3
@@ -25,13 +48,21 @@
       .form-group
         %textarea.form-control{rows: '5', name: 'value'}= node.value
       .form-group
-        %button.btn.btn-primary{type: 'submit'} Save
+        - if etcvault?
+          .row
+            .col-md-4
+              - default_key_name = node.etcvault && node.etcvault['container'] && node.etcvault['container']['KeyName']
+              != haml :etcvault_keys_select, locals: {default_key_name: default_key_name}
+            .col-md-8
+              %button.btn.btn-primary{type: 'submit'} Save
+        - else
+          %button.btn.btn-primary{type: 'submit'} Save
 .row
   .col-md-12
     %h3
       %span.glyphicon.glyphicon-trash{'aria-hidden' => true}
       Delete
-    %form{action: "/keys#{node.key}", method: 'POST', onsubmit: 'javascript:confirm("Sure?")'}
+    %form{action: "/keys#{node.key}", method: 'POST', onsubmit: 'javascript:return confirm("Sure?")'}
       %input{type: 'hidden', name: '_method', value: 'DELETE'}
       .form-group
         %button.btn.btn-danger{type: 'submit'} Destroy

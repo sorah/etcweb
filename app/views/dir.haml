@@ -1,16 +1,94 @@
+:javascript
+  jQuery(function($) {
+    $("#mkdir_form, #value_form").hide();
+    $("#mkdir_form, #value_form").removeClass("hidden");
+
+    $("#open_mkdir_form").click(function() {
+      $("#mkdir_form").show();
+      $("#value_form").hide();
+      $("#mkdir_form .form-control:first").focus();
+    });
+    $("#open_value_form").click(function() {
+      $("#mkdir_form").hide();
+      $("#value_form").show();
+      $("#value_form .form-control:first").focus();
+    });
+  });
+
 .row
   .col-md-12
-      .list-group
-        - node.children.sort_by(&:key).each do |child|
-          - name = child.key.split(?/).last
-          %a.list-group-item{href: "/keys#{child.key}"} 
-            .row
-              - if child.dir
-                .col-md-5
-                  #{name}/
-                .col-md-7
-                  %span.glyphicon.glyphicon-folder-open{'aria-hidden' => true}
-              - else
-                .col-md-5= name
-                .col-md-7
-                  %code= child.value
+    %p
+      %button#open_mkdir_form.btn.btn-default
+        %span.glyphicon.glyphicon-folder-close{'aria-hidden' => true}
+        New directory
+      %button#open_value_form.btn.btn-default
+        %span.glyphicon.glyphicon-plus{'aria-hidden' => true}
+        New value
+
+    - action = "/keys#{node.key}"
+
+    .hidden.panel.panel-default#mkdir_form
+      .panel-heading New directory
+      .panel-body
+        %form.form{action: action, method: 'POST'}
+          %input{type: 'hidden', name: '_method', value: 'PUT'}
+          %input{type: 'hidden', name: 'dir', value: '1'}
+          .form-group
+            %input.form-control{type: 'text', name: 'child', placeholder: 'new key name'}
+          .form-group
+            %button.btn.btn-primary{type: 'submit'} Create
+
+    .hidden.panel.panel-default#value_form
+      .panel-heading New value
+      .panel-body
+        %form.form{action: action, method: 'POST'}
+          %input{type: 'hidden', name: '_method', value: 'PUT'}
+          .form-group
+            %input.form-control{type: 'text', name: 'child', placeholder: 'new key name'}
+          .form-group
+            %textarea.form-control{name: 'value', row: '2', placeholder: 'value'}
+          .form-group
+            - if etcvault?
+              .row
+                .col-md-4
+                  != haml :etcvault_keys_select
+                .col-md-8
+                  %button.btn.btn-primary{type: 'submit'} Create
+            - else
+              %button.btn.btn-primary{type: 'submit'} Create
+
+.row
+  .col-md-12
+    - if node.children.empty?
+      %p (empty directory)
+    .list-group
+      - node.children.sort_by(&:key).each do |child|
+        - name = child.key.split(?/).last
+        %a.list-group-item{href: "/keys#{child.key}"} 
+          .row
+            - if child.dir
+              .col-md-5
+                #{name}/
+              .col-md-7
+                %span.glyphicon.glyphicon-folder-open{'aria-hidden' => true}
+            - else
+              .col-md-4= name
+              .col-md-1.text-right
+                - if child.etcvault
+                  = child.etcvault['container'] && child.etcvault['container']['KeyName']
+                  %span.glyphicon.glyphicon-briefcase{'aria-hidden' => true}
+                - elsif child.etcvault_error
+                  %span.text-danger.glyphicon.glyphicon-briefcase{'aria-hidden' => true}
+              .col-md-7
+                %code= child.value
+.row
+  .col-md-12
+    %form.form-inline{action: "/keys#{node.key}", method: 'POST', onsubmit: 'javascript:return confirm("Sure?")'}
+      %input{type: 'hidden', name: '_method', value: 'DELETE'}
+      %button.btn.btn-danger{type: 'submit'} Destroy
+      .checkbox
+        %label
+          %input{type: 'checkbox', name: 'recursive', value: '1', checked: false}
+          Recursive
+
+

@@ -1,0 +1,6 @@
+- name ||= 'etcvault_key'
+- default_key_name ||= nil
+%select.form-control{name: name}
+  %option{value: '', selected: default_key_name.nil?} No etcvault encryption
+  - etcvault_keys.each do |key_name|
+    %option{value: key_name, selected: default_key_name == key_name} Encrypt using etcvault: #{key_name}
