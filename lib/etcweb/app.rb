@@ -119,6 +119,7 @@ module Etcweb
       end
 
       if request.get?
+        session[:back_to] = request.fullpath
         redirect "/auth/#{omniauth_strategy}"
       else
         halt 401
@@ -127,7 +128,7 @@ module Etcweb
 
     post '/logout' do
       session[:user] = nil
-      redirect "/"
+      redirect '/'
     end
 
     post '/auth/:strategy/callback' do
@@ -138,7 +139,7 @@ module Etcweb
         provider: auth[:provider],
       }
       instance_eval(&auth_after_login_proc)
-      redirect "/"
+      redirect session.delete(:back_to) || "/"
     end
 
     get '/' do
