@@ -25,9 +25,19 @@ module Etcweb
         env.append_path "#{self.root}/bower_components"
       }
 
+    def self.initialize_etcd(config)
+      # etcd v0.2.4 (latest as of Mar 31, 2015) doesn't set TLS parameters in constructor
+      # https://github.com/ranjib/etcd-ruby/commit/bf2c7e6dee8b2c07f85cca8541d16dcbef67cc1a
+      Etcd.client(config).tap do |etcd|
+        etcd.config.ca_file = config[:ca_file]
+        etcd.config.ssl_cert = config[:ssl_cert]
+        etcd.config.ssl_key = config[:ssl_key]
+      end
+    end
+
     def self.initialize_context(config)
       {}.tap do |ctx|
-        ctx[:etcd] = Etcd.client(config[:etcd] || {})
+        ctx[:etcd] = initialize_etcd(config[:etcd] || {})
         ctx[:config] = config
       end
     end
