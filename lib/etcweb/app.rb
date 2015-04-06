@@ -76,6 +76,7 @@ module Etcweb
       def key
         @key ||= "/#{params[:splat] && params[:splat].first}".tap do |k|
           k.concat("/#{params[:child]}") if params[:child]
+          k.sub!(%r{^//}, '/') # for child of root
         end
       end
 
