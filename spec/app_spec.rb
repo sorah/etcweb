@@ -3,7 +3,7 @@ require 'uri'
 require 'etcweb/app'
 
 describe Etcweb::App, type: :app do
-  let(:etcd) { double("etcd") }
+  let(:etcd) { double("etcd", config: double('etcd.config').as_null_object) }
 
   before do
     allow(Etcd).to receive(:client).and_return(etcd)
