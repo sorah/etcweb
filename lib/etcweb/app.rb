@@ -189,6 +189,7 @@ module Etcweb
       end
 
       options[:ttl] = params[:ttl].to_i if params[:ttl]
+      options[:value] = options[:value].gsub("\r\n", "\n") if options[:value]
 
       begin
         @etcd_response = etcd.set(key, options)

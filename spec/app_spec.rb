@@ -111,6 +111,15 @@ describe Etcweb::App, type: :app do
           end
         end
 
+        describe "(CR+LF values)" do
+          let(:params) { {value: "a\r\nb"} }
+          it "sets value to etcd" do
+            expect(etcd).to receive(:set).with('/foo', value: "a\nb").and_return(double('etcd_response'))
+            expect(response).to be_a_redirection
+            expect(URI.parse(response.location).path).to eq '/keys/foo'
+          end
+        end
+
         context "with dir" do
           let(:params) { {dir: '1'} }
 
