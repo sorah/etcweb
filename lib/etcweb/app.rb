@@ -94,7 +94,7 @@ module Etcweb
         if context[:etcvault_keys][:expiry].nil? || context[:etcvault_keys][:expiry] <= Time.now
           context[:etcvault_keys] = {
             expiry: Time.now + etcvault_keys_cache_ttl,
-            keys:   etcd.etcvault_keys
+            keys:   etcd.etcvault_keys.sort
           }
         end
         context[:etcvault_keys][:keys]
