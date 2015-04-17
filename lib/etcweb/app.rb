@@ -198,7 +198,12 @@ module Etcweb
         return haml(:etcd_error, locals: {error: e})
       end
 
-      redirect "/keys#{key}"
+      if params[:continue] != nil
+        parent = key.split(?/).tap(&:pop).join(?/)
+        redirect "/keys#{parent}"
+      else
+        redirect "/keys#{key}"
+      end
     end
 
     delete '/keys/*' do

@@ -49,14 +49,14 @@
           .form-group
             %textarea.form-control{name: 'value', row: '2', placeholder: 'value'}
           .form-group
-            - if etcvault?
               .row
-                .col-md-4
-                  != haml :etcvault_keys_select
-                .col-md-8
+                - if etcvault?
+                  .col-md-4
+                    != haml :etcvault_keys_select
+                .col-md-1
                   %button.btn.btn-primary{type: 'submit'} Create
-            - else
-              %button.btn.btn-primary{type: 'submit'} Create
+                .col-md-4
+                  %button.btn.btn-default{type: 'submit', name: 'continue', value: '1'} Create and Continue
 
 .row
   .col-md-12
