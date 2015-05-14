@@ -142,7 +142,7 @@ module Etcweb
       redirect '/'
     end
 
-    post '/auth/:strategy/callback' do
+    omniauth_callback = proc do
       auth = env['omniauth.auth']
       session[:user] = {
         uid: auth[:uid],
@@ -152,6 +152,8 @@ module Etcweb
       instance_eval(&auth_after_login_proc)
       redirect session.delete(:back_to) || "/"
     end
+    get '/auth/:strategy/callback', &omniauth_callback
+    post '/auth/:strategy/callback', &omniauth_callback
 
     get '/' do
       redirect "/keys/"
