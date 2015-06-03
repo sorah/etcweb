@@ -125,15 +125,19 @@ module Etcweb
       next if request.path_info.start_with?('/auth')
       next unless auth_enabled?
 
-      if current_user && instance_eval(&auth_allow_policy_proc)
-        next
-      end
-
-      if request.get?
-        session[:back_to] = request.fullpath
-        redirect "/auth/#{omniauth_strategy}"
+      if current_user
+        if instance_eval(&auth_allow_policy_proc)
+          next
+        else
+          halt 403
+        end
       else
-        halt 401
+        if request.get?
+          session[:back_to] = request.fullpath
+          redirect "/auth/#{omniauth_strategy}"
+        else
+          halt 401
+        end
       end
     end
 

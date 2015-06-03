@@ -290,5 +290,57 @@ describe Etcweb::App, type: :app do
         end
       end
     end
+
+    context "with allow_policy_proc" do
+      before do
+        app_config[:auth] = {
+          omniauth: 'app_test',
+          allow_policy_proc: proc { false },
+        }
+        begin
+          env['omniauth.auth'] = OmniAuth.config.mock_auth[:app_test]
+          response = post('/auth/app_test/callback', {}, env)
+          current_session.instance_variable_set(:@last_response, nil)
+
+          expect(response).to be_a_redirection
+        ensure
+          env['omniauth.auth'] = nil
+        end
+      end
+
+      describe "GET /" do
+        subject { get '/', {}, env }
+
+        it "denies access with 403" do
+          expect(response.status).to eq 403
+        end
+      end
+
+      describe "GET /keys" do
+        subject { get '/keys', {}, env }
+
+        it "denies access with 403" do
+          expect(response.status).to eq 403
+        end
+      end
+
+      describe "PUT /keys/*" do
+        let(:params) { {value: 'var'} }
+        subject { put '/keys/foo', params, env }
+
+        it "denies access" do 
+          expect(response.status).to eq 403
+        end
+      end
+
+      describe "DELETE /keys/*" do
+        let(:params) { {} }
+        subject { delete '/keys/foo', params, env }
+
+        it "denies access" do 
+          expect(response.status).to eq 403
+        end
+      end
+    end
   end
 end
