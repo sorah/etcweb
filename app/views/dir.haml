@@ -15,8 +15,41 @@
     });
   });
 
+- if etcvault?
+  :javascript
+    jQuery(function($) {
+      if (sessionStorage.getItem('secretVisibility') == null)
+        sessionStorage.setItem('secretVisibility', '1');
+
+      updateSecretVisibility = function() {
+        if (sessionStorage.getItem('secretVisibility') == '1') {
+          $(".etcvault_value").show();
+
+          $("#show_secret").hide();
+          $("#hide_secret").show();
+        } else {
+          $(".etcvault_value").hide();
+
+          $("#show_secret").show();
+          $("#hide_secret").hide();
+        }
+      };
+
+      $("#hide_secret").click(function() {
+        sessionStorage.setItem('secretVisibility', '0');
+        updateSecretVisibility();
+      });
+      $("#show_secret").click(function() {
+        sessionStorage.setItem('secretVisibility', '1');
+        updateSecretVisibility();
+      });
+
+      updateSecretVisibility();
+      $("#secret_visibility_buttons").removeClass('hidden');
+    });
+
 .row
-  .col-md-12
+  .col-md-10
     %p
       %button#open_mkdir_form.btn.btn-default
         %span.glyphicon.glyphicon-folder-close{'aria-hidden' => true}
@@ -25,9 +58,19 @@
         %span.glyphicon.glyphicon-plus{'aria-hidden' => true}
         New value
 
+  .col-md-2
+    %p#secret_visibility_buttons.hidden
+      %button#show_secret.btn.btn-default
+        %span.glyphicon.glyphicon-eye-open{'aria-hidden' => true}
+        Show secrets
+      %button#hide_secret.btn.btn-default
+        %span.glyphicon.glyphicon-eye-close{'aria-hidden' => true}
+        Hide secrets
+
+.row
+  .col-md-12
     - action = "/keys#{node.key}"
     - action = "/keys/" if action == "/keys"
-
     .hidden.panel.panel-default#mkdir_form
       .panel-heading New directory
       .panel-body
@@ -81,7 +124,7 @@
                 - elsif child.etcvault_error
                   %span.text-danger.glyphicon.glyphicon-briefcase{'aria-hidden' => true}
               .col-md-7
-                %code= child.value
+                %code{class: child.etcvault ? 'etcvault_value' : nil}= child.value
 .row
   .col-md-12
     %form.form-inline{action: "/keys#{node.key}", method: 'POST', onsubmit: 'javascript:return confirm("Sure?")'}
