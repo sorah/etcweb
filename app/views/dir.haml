@@ -59,13 +59,14 @@
         New value
 
   .col-md-2
-    %p#secret_visibility_buttons.hidden
-      %button#show_secret.btn.btn-default
-        %span.glyphicon.glyphicon-eye-open{'aria-hidden' => true}
-        Show secrets
-      %button#hide_secret.btn.btn-default
-        %span.glyphicon.glyphicon-eye-close{'aria-hidden' => true}
-        Hide secrets
+    - etcvault?
+      %p#secret_visibility_buttons.hidden
+        %button#show_secret.btn.btn-default
+          %span.glyphicon.glyphicon-eye-open{'aria-hidden' => true}
+          Show secrets
+        %button#hide_secret.btn.btn-default
+          %span.glyphicon.glyphicon-eye-close{'aria-hidden' => true}
+          Hide secrets
 
 .row
   .col-md-12
